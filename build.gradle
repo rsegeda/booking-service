@@ -1,0 +1,136 @@
+import java.time.Duration
+
+plugins {
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.asciidoctor.convert' version '1.5.8'
+    id 'java'
+    id 'jacoco'
+    id 'com.avast.gradle.docker-compose' version '0.10.7'
+    id 'application'
+}
+
+group = 'com.rsegeda'
+version = '0.0.1-SNAPSHOT'
+mainClassName = 'com.rsegeda.bookingservice.BookingServiceApplication'
+sourceCompatibility = '13'
+
+jacocoTestReport {
+    reports {
+        xml.setEnabled(false)
+        csv.setEnabled(false)
+        html.destination file("${buildDir}/reports/jacoco")
+    }
+}
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+    integrationTestImplementation.extendsFrom testImplementation
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
+test {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.rsegeda.bookingservice.BookingServiceApplication',
+                'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
+        )
+    }
+}
+
+task copyToLib(type: Copy) {
+    into "${buildDir}/libs/lib"
+    from configurations.runtime
+}
+
+build.dependsOn(copyToLib)
+installBootDist.dependsOn(build)
+
+task integrationTest(type: Test) {
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+
+integrationTest {
+    useJUnitPlatform()
+
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+    }
+}
+
+dockerCompose.isRequiredBy(integrationTest)
+
+dockerCompose {
+    useComposeFiles = ['docker-compose.yml']
+    // like 'docker-compose -f <file>'; default is empty
+    captureContainersOutput = true
+    // if true, prints output of all containers to Gradle output - very useful for debugging; default is false
+    composeLogToFile = project.file('build/docker-compose-up=logs.txt') // redirect output of
+    // composeUp and composeDown tasks to this file; default is null (ouput is not redirected)
+    containerLogToDir = project.file('build/docker-compose-logs') // directory where composeLogs
+    // task stores output of the containers; default: build/containers-logs
+    includeDependencies = false
+    // calculates services dependencies of startedServices and includes those when gathering logs or removing containers; default is false
+
+    projectName = 'booking-service-docker-compose-project'
+    // allow to set custom docker-compose project name (defaults to a stable name derived from absolute path of the project and nested settings name), set to null to Docker Compose default (directory name)
+//	dockerComposeWorkingDirectory = '/path/where/docker-compose/is/invoked/from'
+    dockerComposeStopTimeout = Duration.ofSeconds(20)
+    // time before docker-compose sends SIGTERM to the running containers after the composeDown task has been started
+    environment.put 'BACKEND_ADDRESS', '192.168.1.100'
+    // Pass environment variable to 'docker-compose' for substitution in compose file
+}

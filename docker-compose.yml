@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+  booking-service-database:
+    image: mongo:latest
+    container_name: booking-service-database
+    restart: always
+    tty: true
+    ports:
+      - 27017:27017
+    networks:
+      - booking-service-network
+
+  booking-service-core:
+    build:
+      context: .
+    container_name: booking-service-core
+    environment:
+      - CONFIG_MONGO_URI=mongodb://booking-service-database:27017/booking-service
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - booking-service-database
+    links:
+      - booking-service-database
+    networks:
+      - booking-service-network
+
+networks:
+  booking-service-network:
+    driver: bridge
