@@ -5,7 +5,6 @@
 package com.rsegeda.bookingservice.controller.dto;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -15,10 +14,10 @@ import lombok.Value;
 @Builder
 public class AppointmentDTO {
 
-  private UUID id;
+  private String id;
 
   @JsonProperty("client_id")
-  private UUID clientId;
+  private String clientId;
 
   @JsonProperty("start_time")
   private LocalDateTime startTime;

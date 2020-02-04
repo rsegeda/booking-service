@@ -9,33 +9,30 @@ import com.rsegeda.bookingservice.service.model.helpers.Gender;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
 @Entity
 @Document
-public class Client implements Persistable<String> {
+public class Client {
 
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid")
-  protected UUID id;
+  protected String id;
 
   @CreatedDate
   private Date createdDate;
@@ -60,22 +57,8 @@ public class Client implements Persistable<String> {
 
   private Boolean banned;
 
-  @DBRef
-  private List<Appointment> appointments;
+  private List<String> appointments;
 
-  @DBRef
-  private List<ClientStats> clientStatsList;
+  private List<String> clientStatsList;
 
-
-  private boolean persisted;
-
-  @Override
-  public String getId() {
-    return id.toString();
-  }
-
-  @Override
-  public boolean isNew() {
-    return !persisted;
-  }
 }

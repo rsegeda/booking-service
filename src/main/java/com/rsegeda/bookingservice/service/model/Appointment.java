@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +17,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -26,12 +24,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @Entity
 @Document
-public class Appointment implements Persistable<String> {
+public class Appointment {
 
   @Id
   @GeneratedValue(generator = "uuid")
   @GenericGenerator(name = "uuid", strategy = "uuid")
-  protected UUID id;
+  protected String id;
 
   @CreatedDate
   private Date createdDate;
@@ -39,9 +37,8 @@ public class Appointment implements Persistable<String> {
   @LastModifiedDate
   private Date lastModifiedDate;
 
-  @DBRef
   @NotNull
-  private Client client;
+  private String clientId;
 
   @NotNull
   private LocalDateTime startTime;
@@ -52,15 +49,4 @@ public class Appointment implements Persistable<String> {
   @DBRef
   private List<Asset> assets;
 
-  private boolean persisted;
-
-  @Override
-  public String getId() {
-    return id.toString();
-  }
-
-  @Override
-  public boolean isNew() {
-    return !persisted;
-  }
 }

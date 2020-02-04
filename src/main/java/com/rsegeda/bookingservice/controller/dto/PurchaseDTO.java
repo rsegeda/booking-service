@@ -5,7 +5,6 @@
 package com.rsegeda.bookingservice.controller.dto;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
@@ -19,7 +18,7 @@ public class PurchaseDTO {
   private BigDecimal price;
 
   @JsonProperty("appointment_id")
-  private UUID appointmentId;
+  private String appointmentId;
 
   @JsonProperty("loyalty_points")
   private Integer loyaltyPoints;

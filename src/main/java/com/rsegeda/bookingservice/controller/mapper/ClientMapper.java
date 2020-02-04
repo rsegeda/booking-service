@@ -17,11 +17,10 @@ public interface ClientMapper {
 
   ClientDTO toDTO(Client client);
 
-  @Mapping(target = "appointments", ignore = true)
   @Mapping(target = "clientStatsList", ignore = true)
+  @Mapping(target = "appointments", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "lastModifiedDate", ignore = true)
-  @Mapping(target = "persisted", ignore = true)
   Client toDomain(ClientDTO clientDTO);
 
   List<Client> toDomains(List<ClientDTO> clientDTO);

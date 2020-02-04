@@ -4,8 +4,6 @@
 
 package com.rsegeda.bookingservice.controller.dto;
 
-import java.util.UUID;
-
 import lombok.Builder;
 import lombok.Value;
 
@@ -13,6 +11,6 @@ import lombok.Value;
 @Builder
 class ClientStatsDTO {
 
-  private UUID id;
+  private String id;
   private Long loyaltyPointsSum;
 }

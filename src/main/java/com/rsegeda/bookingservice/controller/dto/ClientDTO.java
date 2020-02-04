@@ -6,9 +6,6 @@ package com.rsegeda.bookingservice.controller.dto;
 
 import com.rsegeda.bookingservice.service.model.helpers.Gender;
 
-import java.util.List;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Value;
@@ -17,7 +14,7 @@ import lombok.Value;
 @Value
 public class ClientDTO {
 
-  private UUID id;
+  private String id;
 
   @JsonProperty("first_name")
   private String firstName;
@@ -28,7 +25,5 @@ public class ClientDTO {
   private String phone;
   private Gender gender;
   private Boolean banned = false;
-
-  private List<AppointmentDTO> appointments;
 
 }
