@@ -3,11 +3,11 @@ import java.time.Duration
 plugins {
     id 'org.springframework.boot' version '2.2.4.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'org.asciidoctor.convert' version '1.5.8'
     id 'java'
     id 'jacoco'
     id 'com.avast.gradle.docker-compose' version '0.10.7'
     id 'application'
+    id 'org.asciidoctor.convert' version '1.5.9.2'
 }
 
 group = 'com.rsegeda'
@@ -60,6 +60,8 @@ ext {
     lombokVersion = '1.18.10'
     apacheHttpclientVersion = '4.5.10'
     hibernateAnnotationsVersion = '3.5.6-Final'
+    swaggerVersion = '2.9.2'
+
     set('snippetsDir', file("build/generated-snippets"))
 }
 
@@ -72,6 +74,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compile 'javax.persistence:javax.persistence-api'
     compile "org.hibernate:hibernate-annotations:${hibernateAnnotationsVersion}"
+    compile "io.springfox:springfox-swagger2:${swaggerVersion}"
+    compile "io.springfox:springfox-bean-validators:${swaggerVersion}"
+    compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -95,8 +100,10 @@ test {
 }
 
 asciidoctor {
-    inputs.dir snippetsDir
     dependsOn test
+    inputs.dir snippetsDir
+    sourceDir = file('build/generated-snippets')
+    outputDir = file('build/docs')
 }
 
 jar {
@@ -129,7 +136,7 @@ integrationTest {
     useJUnitPlatform()
 
     testLogging {
-        events =['PASSED', 'FAILED', 'SKIPPED']
+        events = ['PASSED', 'FAILED', 'SKIPPED']
     }
 }
 

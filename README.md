@@ -14,9 +14,10 @@
  4. Spring Boot Actuator
  5. Spring Boot Dev Tools
  6. Spring Boot REST Docs
- 7. Lombok
- 8. Docker + Docker Compose
- 9. JUnit Jupiter + JaCoCo
+ 7. Swagger + Swagger UI + Swagger validator
+ 8. Lombok
+ 9. Docker + Docker Compose
+ 10. JUnit Jupiter + JaCoCo
  
 
  ## How to:
@@ -37,11 +38,17 @@
     
  ## How to use API
  
- ### TODO postman collection
- > todo.json contains query templates
->
- ### TODO Spring REST docs
+ ### Swagger UI
  
+ Available at http://localhost:8080/swagger-ui.html
+ ### Example requests collection
+ > Generated from the integration tests with the help of Spring REST Docs
+
+Example requests (snippets) are available after running 
+
+`./gradlew build`
+
+under the [build/generated-snippets](build/generated-snippets)
  
  ### TODO Spring actuator info
  
