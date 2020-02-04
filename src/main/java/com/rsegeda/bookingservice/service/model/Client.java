@@ -8,6 +8,7 @@ import com.rsegeda.bookingservice.service.model.helpers.Gender;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,6 +33,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Client implements Persistable<String> {
 
   @Id
+  @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid")
   protected UUID id;
 
   @CreatedDate

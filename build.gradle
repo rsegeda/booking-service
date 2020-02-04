@@ -59,6 +59,7 @@ ext {
     mapstructVersion = '1.3.1.Final'
     lombokVersion = '1.18.10'
     apacheHttpclientVersion = '4.5.10'
+    hibernateAnnotationsVersion = '3.5.6-Final'
     set('snippetsDir', file("build/generated-snippets"))
 }
 
@@ -70,6 +71,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compile 'javax.persistence:javax.persistence-api'
+    compile "org.hibernate:hibernate-annotations:${hibernateAnnotationsVersion}"
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -86,6 +88,10 @@ dependencies {
 test {
     outputs.dir snippetsDir
     useJUnitPlatform()
+
+    testLogging {
+        events = ['PASSED', 'FAILED', 'SKIPPED']
+    }
 }
 
 asciidoctor {
@@ -111,6 +117,9 @@ build.dependsOn(copyToLib)
 installBootDist.dependsOn(build)
 
 task integrationTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+    shouldRunAfter test
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     outputs.upToDateWhen { false }
@@ -120,9 +129,11 @@ integrationTest {
     useJUnitPlatform()
 
     testLogging {
-        events 'PASSED', 'FAILED', 'SKIPPED'
+        events =['PASSED', 'FAILED', 'SKIPPED']
     }
 }
+
+check.dependsOn integrationTest
 
 dockerCompose {
     useComposeFiles = ['docker-compose.yml']
