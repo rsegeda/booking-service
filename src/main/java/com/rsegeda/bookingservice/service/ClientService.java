@@ -6,9 +6,11 @@ package com.rsegeda.bookingservice.service;
 
 import com.rsegeda.bookingservice.controller.dto.ClientDTO;
 import com.rsegeda.bookingservice.controller.mapper.ClientMapper;
+import com.rsegeda.bookingservice.service.model.Client;
 import com.rsegeda.bookingservice.service.repository.ClientRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,11 +27,9 @@ public class ClientService {
   }
 
   public ClientDTO create(ClientDTO clientDto) {
-    if (clientDto.getId() != null) {
-      throw new IllegalArgumentException("A new client should not contain an id.");
-    }
-
-    return clientMapper.toDTO(clientRepository.save(clientMapper.toDomain(clientDto)));
+    Client newClient = clientMapper.toDomain(clientDto);
+    newClient.setId(UUID.randomUUID().toString());
+    return clientMapper.toDTO(clientRepository.save(newClient));
   }
 
   public Optional<ClientDTO> update(String id, ClientDTO clientDto) {
