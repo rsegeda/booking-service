@@ -61,6 +61,7 @@ ext {
     apacheHttpclientVersion = '4.5.10'
     hibernateAnnotationsVersion = '3.5.6-Final'
     swaggerVersion = '2.9.2'
+    openCsvVersion = '5.1'
 
     set('snippetsDir', file("build/generated-snippets"))
 }
@@ -77,7 +78,7 @@ dependencies {
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "io.springfox:springfox-bean-validators:${swaggerVersion}"
     compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
-
+    compile "com.opencsv:opencsv:${openCsvVersion}"
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

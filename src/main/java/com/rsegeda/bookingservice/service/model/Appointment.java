@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Builder
@@ -45,8 +43,5 @@ public class Appointment {
 
   @NotNull
   private LocalDateTime endTime;
-
-  @DBRef
-  private List<Asset> assets;
 
 }

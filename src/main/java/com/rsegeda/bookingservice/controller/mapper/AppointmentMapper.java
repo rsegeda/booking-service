@@ -17,10 +17,9 @@ public interface AppointmentMapper {
 
   AppointmentDTO toDTO(Appointment appointment);
 
-  @Mapping(target = "assets", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "lastModifiedDate", ignore = true)
-  Appointment toDomain(AppointmentDTO clientDTO);
+  Appointment toDomain(AppointmentDTO appointmentDTO);
 
   List<Appointment> toDomains(List<AppointmentDTO> appointments);
 

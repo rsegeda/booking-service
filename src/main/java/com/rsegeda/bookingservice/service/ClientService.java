@@ -9,6 +9,7 @@ import com.rsegeda.bookingservice.controller.mapper.ClientMapper;
 import com.rsegeda.bookingservice.service.model.Client;
 import com.rsegeda.bookingservice.service.repository.ClientRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,5 +47,10 @@ public class ClientService {
 
   public void delete(String id) {
     clientRepository.deleteById(id);
+  }
+
+  List<ClientDTO> createAll(List<ClientDTO> clientDTOs) {
+    List<Client> newClients = clientMapper.toDomains(clientDTOs);
+    return clientMapper.toDTOs(clientRepository.saveAll(newClients));
   }
 }
