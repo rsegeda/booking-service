@@ -50,7 +50,10 @@ Example requests (snippets) are available after running
 
 under the [build/generated-snippets](build/generated-snippets)
  
- ### TODO Spring actuator info
+ ### Spring actuator info
+ 
+ To check if the app is running, query
+ [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
  
  ## Test coverage
  
@@ -62,7 +65,3 @@ under the [build/generated-snippets](build/generated-snippets)
  
  to run integration tests:
  * run `./gradlew integrationTest`
- `NOTE: This step requires docker. Integration tests are preceeded by running docker compose up
-  automatically. Two services would be created. After the tests are done, the compose down is
-   executed.`
- 
