@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -34,41 +35,54 @@ public class ImportService {
   private final AssetService assetService;
 
   @Transactional
-  public void triggerImport(MultipartFile clients, MultipartFile appointments,
-                            MultipartFile purchases,
-                            MultipartFile services) {
+  public void triggerImport(MultipartFile clientsFile, MultipartFile appointmentsFile,
+                            MultipartFile purchasesFile,
+                            MultipartFile servicesFile) {
 
-    triggerClientImport(clients)
-        .thenAccept((Void) -> log.info("clients imported"));
-    triggerAppointmentImport(appointments)
-        .thenAccept((Void) -> log.info("appointments imported"));
-    triggerAssetImport(purchases, AssetType.PURCHASE)
-        .thenAccept((Void) -> log.info("purchases imported"));
-    triggerAssetImport(services, AssetType.SERVICE)
-        .thenAccept((Void) -> log.info("services imported"));
+    CompletableFuture<List<ClientDTO>> clientsList = triggerClientImport(clientsFile);
+    CompletableFuture<List<AppointmentDTO>> appointmentsList =
+        triggerAppointmentImport(appointmentsFile);
+
+    CompletableFuture<List<AssetDTO>> purchasesList = triggerAssetImport(purchasesFile,
+        AssetType.PURCHASE);
+
+    CompletableFuture<List<AssetDTO>> servicesList = triggerAssetImport(servicesFile,
+        AssetType.SERVICE);
+
+    try {
+      List<ClientDTO> clients = clientsList.get();
+      List<AppointmentDTO> appointments = appointmentsList.get();
+      List<AssetDTO> purchases = purchasesList.get();
+      List<AssetDTO> services = servicesList.get();
+
+      log.info("clientsFile size " + clients.size());
+      log.info("appointmentsFile size " + appointments.size());
+      log.info("purchasesFile size " + purchases.size());
+      log.info("servicesFile size " + services.size());
+
+      clientService.createAll(clients);
+      appointmentService.createAll(appointments);
+      purchases.addAll(services);
+      assetService.createAll(purchases);
+    } catch (InterruptedException | ExecutionException e) {
+      log.error("import failed");
+    }
   }
 
-  private CompletableFuture<Void> triggerClientImport(MultipartFile file) {
-    return CompletableFuture.supplyAsync(() -> {
-      List<ClientDTO> clientDTOS = toCsv(file, ClientDTO.class);
-      clientService.createAll(clientDTOS);
-      return null;
-    });
+  private CompletableFuture<List<ClientDTO>> triggerClientImport(MultipartFile file) {
+    return CompletableFuture.supplyAsync(() -> toCsv(file, ClientDTO.class));
   }
 
-  private CompletableFuture<Void> triggerAppointmentImport(MultipartFile file) {
-    return CompletableFuture.supplyAsync(() -> {
-      List<AppointmentDTO> appointmentDTOS = toCsv(file, AppointmentDTO.class);
-      appointmentService.createAll(appointmentDTOS);
-      return null;
-    });
+  private CompletableFuture<List<AppointmentDTO>> triggerAppointmentImport(MultipartFile file) {
+    return CompletableFuture.supplyAsync(() -> toCsv(file, AppointmentDTO.class));
   }
 
-  private CompletableFuture<Void> triggerAssetImport(MultipartFile file, AssetType assetType) {
+  private CompletableFuture<List<AssetDTO>> triggerAssetImport(MultipartFile file,
+                                                               AssetType assetType) {
     return CompletableFuture.supplyAsync(() -> {
-      List<AssetDTO> assetDTOs = toCsv(file, AssetDTO.class);
-      assetService.createAll(assetDTOs, assetType);
-      return null;
+      List<AssetDTO> assets = toCsv(file, AssetDTO.class);
+      assets.forEach(asset -> asset.setAssetType(assetType));
+      return assets;
     });
   }
 

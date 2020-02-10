@@ -17,8 +17,6 @@ public interface ClientMapper {
 
   ClientDTO toDTO(Client client);
 
-  @Mapping(target = "clientStatsList", ignore = true)
-  @Mapping(target = "appointments", ignore = true)
   @Mapping(target = "createdDate", ignore = true)
   @Mapping(target = "lastModifiedDate", ignore = true)
   Client toDomain(ClientDTO clientDTO);

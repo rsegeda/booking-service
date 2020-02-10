@@ -14,7 +14,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
@@ -56,9 +55,5 @@ public class Client {
   private Gender gender;
 
   private Boolean banned;
-
-  private List<String> appointments;
-
-  private List<String> clientStatsList;
 
 }
