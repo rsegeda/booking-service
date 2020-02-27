@@ -1,4 +1,4 @@
-# phorest-techtest-romansegeda
+# booking-service
 
  ## Info
  
